@@ -22,8 +22,7 @@ jobs:
           channel: 'stable'
       - name: Pub Get Packages
         run: flutter pub get
-      - name: Build AOT
-        run: flutter build aot
+
       - name: Analyze Dart Code
         run: flutter analyze
       - name: Run Tests
