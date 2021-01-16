@@ -1,41 +1,26 @@
-name: Dart
-
+name: Build and Test
 on:
-  push:
-    branches: [ master ]
   pull_request:
-    branches: [ master ]
-
+    branches:
+      - master
 jobs:
-  build:
+  build-and-test:
     runs-on: ubuntu-latest
-
-    # Note that this workflow uses the latest stable version of the Dart SDK.
-    # Docker images for other release channels - like dev and beta - are also
-    # available. See https://hub.docker.com/r/google/dart/ for the available
-    # images.
-    container:
-      image:  google/dart:latest
-    
     steps:
-      - uses: actions/checkout@v2
-
-      - name: Print Dart SDK version
-        run: dart --version
-    
-      - uses: actions/setup-java@v1
+      - uses: actions/checkout@v1
+      - name: Setup Java
+        uses: actions/setup-java@v1
         with:
           java-version: '12.x'
-
-      - name: Install dependencies
+      - name: Setup Flutter
+        uses: subosito/flutter-action@v1
+        with:
+          channel: 'stable'
+      - name: Pub Get Packages
         run: flutter pub get
-        
-      # Consider passing '--fatal-infos' for slightly stricter analysis.
-      - name: Analyze project source
-        run: dart analyze
-
-      # Your project will need to have tests in test/ and a dependency on
-      # package:test for this step to succeed. Note that Flutter projects will
-      # want to change this to 'flutter test'.
-      - name: Run tests
-        run: dart test
+      - name: Build AOT
+        run: flutter build aot
+      - name: Analyze Dart Code
+        run: flutter analyze
+      - name: Run Tests
+        run: flutter test
