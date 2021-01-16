@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
-import 'package:translator/translator.dart';
+//import 'package:translator/translator.dart';
 import 'package:bitcope/pages/registration_page.dart';
 
 class HomePage extends StatefulWidget {
@@ -13,7 +13,7 @@ class _HomePageState extends State<HomePage> {
 
   @override
   Widget build(BuildContext context) {
-    final translator = GoogleTranslator();
+    // final translator = GoogleTranslator();
     final myEmailController = TextEditingController();
     final myPasswordController = TextEditingController();
     final emailfield = TextField(
@@ -68,14 +68,14 @@ class _HomePageState extends State<HomePage> {
     //   ),
     // );
 
-    @override
-    void dispose() {
-      // Clean up the controller when the widget is removed from the
-      // widget tree.
-      myEmailController.dispose();
-      myPasswordController.dispose();
-      super.dispose();
-    }
+    // @override
+    // void dispose() {
+    //   // Clean up the controller when the widget is removed from the
+    //   // widget tree.
+    //   myEmailController.dispose();
+    //   myPasswordController.dispose();
+    //   super.dispose();
+    // }
 
     return Scaffold(
       appBar: AppBar(
@@ -107,11 +107,7 @@ class _HomePageState extends State<HomePage> {
                 RaisedButton(
                     child: Text('Click to login'),
                     padding: EdgeInsets.all(12.0),
-                    onPressed: () {
-                      return Container(
-                          child: Text(
-                              " Email value is ${myEmailController.text} and Password is ${myPasswordController.text}"));
-                    }),
+                    onPressed: () {}),
                 RaisedButton(
                     child: Text('Click to signup'),
                     padding: EdgeInsets.all(12.0),
