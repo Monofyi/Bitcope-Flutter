@@ -37,6 +37,7 @@ dependencies:
   translator: ^0.1.5
   font_awesome_flutter: ^8.11.0
   getwidget: ^1.2.4
+  sizer: ^1.1.8
 
 
 dev_dependencies:

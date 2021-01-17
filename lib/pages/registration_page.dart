@@ -1,11 +1,9 @@
-import 'dart:ui';
-
 import 'package:bitcope/utils/customtext.dart';
 import 'package:bitcope/utils/customtextfield.dart';
+import 'package:bitcope/utils/socialmediabuttons.dart';
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
-//import 'package:google_fonts/google_fonts.dart';
 
 class RegistrationPage extends StatefulWidget {
   @override
@@ -13,6 +11,17 @@ class RegistrationPage extends StatefulWidget {
 }
 
 class _RegistrationPageState extends State<RegistrationPage> {
+  String _userName;
+  String _email;
+  String _password;
+  String _confirmPassword;
+  TextEditingController userNameTEC = TextEditingController();
+  TextEditingController emailTEC = TextEditingController();
+  TextEditingController passwordTEC = TextEditingController();
+  TextEditingController confirmPasswordTEC = TextEditingController();
+  bool termsCheckBox = false;
+  final GlobalKey<ScaffoldState> _scaffoldKey = new GlobalKey<ScaffoldState>();
+  final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
   String choosedRecoveryQuestion;
   List<String> recoveryQuestions = [
     'What is the name of your first pet?',
@@ -23,13 +32,7 @@ class _RegistrationPageState extends State<RegistrationPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      // appBar: AppBar(
-      //   backgroundColor: Colors.transparent,
-      //   title: CustomText(
-      //     text: 'Bitecope',
-      //     color: Colors.white,
-      //   ),
-      // ),
+      key: _scaffoldKey,
       body: Container(
         decoration: BoxDecoration(
           gradient: LinearGradient(
@@ -50,8 +53,6 @@ class _RegistrationPageState extends State<RegistrationPage> {
                 Row(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: <Widget>[
-                    //Icon(Icons.arrow_back, color: Colors.white),
-
                     CustomText(
                       text: 'Bitecope',
                       color: Colors.white,
@@ -80,52 +81,100 @@ class _RegistrationPageState extends State<RegistrationPage> {
             SizedBox(
               height: 20,
             ),
-            // Padding(
-            //   padding: const EdgeInsets.only(top: 18.0, bottom: 10.0, left: 15),
-            //   child: CustomText(
-            //     text: 'Details',
-            //     color: Colors.white,
-            //   ),
-            // ),
             Padding(
               padding: const EdgeInsets.only(left: 28.0, right: 28.0),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                mainAxisAlignment: MainAxisAlignment.start,
-                children: <Widget>[
-                  customTextFields(
+              child: Form(
+                key: _formKey,
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  mainAxisAlignment: MainAxisAlignment.start,
+                  children: <Widget>[
+                    customTextFields(
+                      controller: userNameTEC,
+                      keyboardType: TextInputType.text,
                       context: context,
                       color: Colors.white24,
                       iconData: Icons.account_box,
                       name: 'User Name*',
-                      initialValue: 'imssurya'),
-
-                  SizedBox(height: 8),
-                  customTextFields(
+                      //initialValue: 'imssurya',
+                      onSaved: (value) {
+                        _userName = value;
+                      },
+                      validator: (value) {
+                        //^[a-z0-9_]{8,16}$
+                        String patttern = r'(^[a-zA-Z0-9_]{8,16}$)';
+                        RegExp regExp = RegExp(patttern);
+                        if (value.length == 0) {
+                          return "User Name is Required";
+                        } else if (!regExp.hasMatch(value)) {
+                          return "User Name must be atleast 8 letters";
+                        }
+                        return null;
+                      },
+                    ),
+                    SizedBox(height: 8),
+                    customTextFields(
+                      controller: emailTEC,
+                      keyboardType: TextInputType.emailAddress,
                       context: context,
                       color: Colors.white24,
                       iconData: Icons.email,
                       name: 'Email*',
-                      initialValue: 'xyz@mail.com'),
-
-                  SizedBox(height: 8),
-                  // customTextFiels(context, 'Phone No*', Icons.phone),
-                  // SizedBox(height: 8),
-                  customTextFields(
+                      //initialValue: 'xyz@mail.com',
+                      onSaved: (value) {
+                        _email = value;
+                      },
+                      validator: (value) {
+                        String pattern =
+                            r'^(([^<>()[\]\\.,;:\s@\"]+(\.[^<>()[\]\\.,;:\s@\"]+)*)|(\".+\"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$';
+                        RegExp regExp = new RegExp(pattern);
+                        if (value.length == 0) {
+                          return "Email is Required";
+                        } else if (!regExp.hasMatch(value)) {
+                          return "Invalid Email";
+                        } else {
+                          return null;
+                        }
+                      },
+                    ),
+                    SizedBox(height: 8),
+                    customTextFields(
+                      controller: passwordTEC,
+                      keyboardType: TextInputType.text,
                       context: context,
                       color: Colors.white24,
                       iconData: Icons.visibility,
                       name: 'Password*',
-                      initialValue: '***********'),
-
-                  SizedBox(height: 8),
-                  customTextFields(
+                      //initialValue: '***********',
+                      onSaved: (value) {
+                        _password = value;
+                      },
+                      validator: (value) {
+                        if (value.isEmpty) return 'Password is Required';
+                        return null;
+                      },
+                    ),
+                    SizedBox(height: 8),
+                    customTextFields(
+                      controller: confirmPasswordTEC,
+                      keyboardType: TextInputType.text,
                       context: context,
                       color: Colors.white24,
                       iconData: Icons.visibility,
                       name: 'Confirm Password*',
-                      initialValue: '***********'),
-                ],
+                      //initialValue: '***********',
+                      onSaved: (value) {
+                        _password = value;
+                      },
+                      validator: (value) {
+                        if (value.isEmpty) return 'Password is Required Here';
+                        if (value != passwordTEC.text)
+                          return 'Password and Confirm password Not Matched';
+                        return null;
+                      },
+                    ),
+                  ],
+                ),
               ),
             ),
             SizedBox(height: 10),
@@ -133,13 +182,25 @@ class _RegistrationPageState extends State<RegistrationPage> {
               padding: const EdgeInsets.only(left: 28.0, right: 28.0),
               child: Row(
                 children: <Widget>[
-                  Icon(Icons.check_box_outline_blank, color: Colors.white60),
+                  GestureDetector(
+                    child: Icon(
+                        termsCheckBox == false
+                            ? Icons.check_box_outline_blank
+                            : Icons.check_box_outlined,
+                        color: Colors.white60),
+                    onTap: () {
+                      print('object');
+                      setState(() {
+                        termsCheckBox = !termsCheckBox;
+                      });
+                    },
+                  ),
                   SizedBox(width: 5),
                   RichText(
                     text: TextSpan(
                       children: [
                         TextSpan(
-                          text: 'I Read and agree to , ',
+                          text: 'I Read and agree to, ',
                           style: TextStyle(color: Colors.white60),
                         ),
                         TextSpan(
@@ -152,11 +213,6 @@ class _RegistrationPageState extends State<RegistrationPage> {
                       ],
                     ),
                   ),
-                  // CustomText(
-                  //   text: 'I Read and agree to terms & Conditions',
-                  //   color: Colors.white60,
-                  //   size: 15,
-                  // ),
                 ],
               ),
             ),
@@ -171,11 +227,28 @@ class _RegistrationPageState extends State<RegistrationPage> {
                 color: Color(0xFFFF3799),
                 shape: RoundedRectangleBorder(
                     borderRadius: BorderRadius.all(Radius.circular(16.0))),
-                onPressed: () {},
+                onPressed: () {
+                  if (_formKey.currentState.validate() && termsCheckBox) {
+                    print('im okey');
+                  }
+                  if (!_formKey.currentState.validate() || !termsCheckBox) {
+                    return _scaffoldKey.currentState.showSnackBar(SnackBar(
+                      content: Container(
+                          color: Colors.transparent,
+                          height: 20,
+                          child: Center(
+                            child: CustomText(
+                                text:
+                                    'Please read Terms&Conditions and Approve',
+                                color: Colors.white),
+                          )),
+                      duration: Duration(milliseconds: 900),
+                    ));
+                  }
+                },
               ),
             ),
             SizedBox(height: 30),
-
             Padding(
               padding: const EdgeInsets.only(left: 28.0, right: 28.0),
               child: Row(
@@ -201,84 +274,17 @@ class _RegistrationPageState extends State<RegistrationPage> {
               ),
             ),
             SizedBox(height: 15),
-            // Container(
-            //   height: 20,
-            //   width: 20,
-            //   decoration: BoxDecoration(
-            //     color: Colors.blue,
-            //     borderRadius: BorderRadius.circular(20),
-            //   ),
-
-            //   //boxShadow: BaseStyles.boxShadow),
-            //   child: Icon(
-            //     FontAwesomeIcons.facebookF,
-            //   ),
-            // ),
             Row(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
-                Container(
-                  height: 48.0,
-                  width: 48.0,
-                  child: Icon(
-                    FontAwesomeIcons.facebookF,
-                    color: Colors.white,
-                  ),
-                  decoration: BoxDecoration(
-                    shape: BoxShape.circle,
-                    color: Colors.blue,
-                    // boxShadow: [
-                    //   BoxShadow(
-                    //       color: Colors.black54,
-                    //       offset: Offset(0, 2),
-                    //       blurRadius: 6.0)
-                    // ],
-                    // image: DecorationImage(
-                    //   image: logo,
-                  ),
-                ),
+                socialMediaButtons(
+                    icon: FontAwesomeIcons.facebookF, color: Colors.blue),
                 SizedBox(width: 15),
-                Container(
-                  height: 48.0,
-                  width: 48.0,
-                  child: Icon(
-                    FontAwesomeIcons.googlePlusG,
-                    color: Colors.white,
-                  ),
-                  decoration: BoxDecoration(
-                    shape: BoxShape.circle,
-                    color: Colors.red,
-                    // boxShadow: [
-                    //   BoxShadow(
-                    //       color: Colors.black54,
-                    //       offset: Offset(0, 2),
-                    //       blurRadius: 6.0)
-                    // ],
-                    // image: DecorationImage(
-                    //   image: logo,
-                  ),
-                ),
+                socialMediaButtons(
+                    icon: FontAwesomeIcons.googlePlusG, color: Colors.red),
                 SizedBox(width: 15),
-                Container(
-                  height: 48.0,
-                  width: 48.0,
-                  child: Icon(
-                    FontAwesomeIcons.twitter,
-                    color: Colors.white,
-                  ),
-                  decoration: BoxDecoration(
-                    shape: BoxShape.circle,
-                    color: Color(0xFF1DA1F2),
-                    // boxShadow: [
-                    //   BoxShadow(
-                    //       color: Colors.black54,
-                    //       offset: Offset(0, 2),
-                    //       blurRadius: 6.0)
-                    // ],
-                    // image: DecorationImage(
-                    //   image: logo,
-                  ),
-                ),
+                socialMediaButtons(
+                    icon: FontAwesomeIcons.twitter, color: Color(0xFF1DA1F2)),
               ],
             ),
             SizedBox(
@@ -309,59 +315,6 @@ class _RegistrationPageState extends State<RegistrationPage> {
                 ],
               ),
             ),
-            // GFIconButton(
-            //   onPressed: () {},
-            //   text: "primary",
-            //   icon: Icon(Icons.),
-            // ),
-            // Row(
-            //   children: <Widget>[
-            //     Container(
-
-            //         //    margin: EdgeInsets.all(100.0),
-            //         decoration: BoxDecoration(
-            //             color: Colors.white, shape: BoxShape.circle),
-            //         child: Icon(
-            //           FontAwesomeIcons.facebook,
-            //         )),
-            //     Container()
-            //   ],
-            // )
-            // Padding(
-            //   padding: const EdgeInsets.only(top: 10.0, bottom: 10.0, left: 15),
-            //   child: CustomText(
-            //     text: 'Recovery Options',
-            //     color: Colors.white,
-            //   ),
-            // ),
-            // Padding(
-            //   padding: const EdgeInsets.only(left: 28.0, right: 28.0),
-            //   child: Container(
-            //     child: Center(
-            //       child: Column(
-            //         children: [
-            //           DropdownButton(
-            //             hint: Text('Select Question'),
-            //             value: choosedRecoveryQuestion,
-            //             items: recoveryQuestions.map((value) {
-            //               return DropdownMenuItem(
-            //                 value: value,
-            //                 child: Text(value),
-            //               );
-            //             }).toList(),
-            //             onChanged: (value) {
-            //               setState(
-            //                 () {
-            //                   choosedRecoveryQuestion = value;
-            //                 },
-            //               );
-            //             },
-            //           ),
-            //         ],
-            //       ),
-            //     ),
-            //   ),
-            // )
           ],
         ),
       ),
