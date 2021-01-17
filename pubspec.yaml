@@ -35,6 +35,10 @@ dependencies:
   # intl_phone_field: ^1.4.2
   google_fonts: ^1.1.1
   translator: ^0.1.5
+  font_awesome_flutter: ^8.11.0
+  getwidget: ^1.2.4
+
+
 dev_dependencies:
   flutter_test:
     sdk: flutter
