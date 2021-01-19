@@ -1,8 +1,6 @@
 import 'package:bitcope/pages/loginpage.dart';
 import 'package:bitcope/utils/sizeconfig.dart';
 import 'package:flutter/material.dart';
-import 'package:bitcope/pages/home_page.dart';
-import 'package:sizer/sizer_util.dart';
 
 void main() {
   runApp(MyApp());

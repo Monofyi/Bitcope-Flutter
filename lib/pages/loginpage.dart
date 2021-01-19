@@ -2,10 +2,8 @@ import 'package:bitcope/model/usermodel.dart';
 import 'package:bitcope/utils/customtext.dart';
 import 'package:bitcope/utils/customtextfield.dart';
 import 'package:bitcope/utils/sizeconfig.dart';
-import 'package:bitcope/utils/socialmediabuttons.dart';
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
-import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 
 class LoginPage extends StatefulWidget {
   @override
