@@ -229,7 +229,7 @@ class _RegistrationPageState extends State<RegistrationPage> {
                     _formKey.currentState.save();
                   }
                   if (!_formKey.currentState.validate() || !termsCheckBox) {
-                    return _scaffoldKey.currentState.showSnackBar(SnackBar(
+                    return ScaffoldMessenger.of(context).showSnackBar(SnackBar(
                       content: Container(
                           color: Colors.transparent,
                           height: 2.5 * SizeConfig.heightMultiplier,

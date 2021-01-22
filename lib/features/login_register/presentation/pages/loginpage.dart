@@ -38,7 +38,7 @@ class _LoginPageState extends State<LoginPage> {
       child: BlocListener<LoginBloc, LoginState>(
         listener: (BuildContext context, state) {
           if (state is LoginFaliure) {
-            _scaffoldKey.currentState.showSnackBar(SnackBar(
+            ScaffoldMessenger.of(context).showSnackBar(SnackBar(
               duration: Duration(milliseconds: 1200),
               content: Text('${state.error}'),
               backgroundColor: Colors.red,
