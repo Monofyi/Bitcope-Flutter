@@ -1,16 +1,20 @@
 import 'package:flutter/material.dart';
 
-Widget customTextFields(
-    {BuildContext context,
-    String name,
-    IconData iconData,
-    Color color,
-    String initialValue,
-    Function validator,
-    Function onSaved,
-    TextInputType keyboardType,
-    TextEditingController controller}) {
+Widget customTextFields({
+  BuildContext context,
+  String name,
+  IconData iconData,
+  Color color,
+  String initialValue,
+  Function validator,
+  Function onSaved,
+  TextInputType keyboardType,
+  TextEditingController controller,
+  bool obscureText,
+  Function iconTap,
+}) {
   return TextFormField(
+    obscureText: obscureText,
     controller: controller,
     keyboardType: keyboardType,
     validator: validator,
@@ -26,10 +30,13 @@ Widget customTextFields(
         color: Colors.white30,
       ),
       // helperText: 'Helper text',
-      suffixIcon: Icon(
-        iconData,
-        size: 20,
-        color: Colors.white24,
+      suffixIcon: GestureDetector(
+        onTap: iconTap,
+        child: Icon(
+          iconData,
+          size: 20,
+          color: Colors.white24,
+        ),
       ),
       enabledBorder: UnderlineInputBorder(
         borderSide: BorderSide(color: color),

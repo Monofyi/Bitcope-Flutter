@@ -1,11 +1,12 @@
-import 'package:bitcope/model/usermodel.dart';
-import 'package:bitcope/utils/customtext.dart';
-import 'package:bitcope/utils/customtextfield.dart';
-import 'package:bitcope/utils/socialmediabuttons.dart';
+import 'package:bitcope/features/login_register/data/repository/user_repository.dart';
+import 'package:bitcope/features/login_register/presentation/pages/loginpage.dart';
+import 'package:bitcope/core/utils/customtext.dart';
+import 'package:bitcope/core/utils/customtextfield.dart';
+import 'package:bitcope/core/utils/sizeconfig.dart';
+import 'package:bitcope/core/utils/socialmediabuttons.dart';
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
-import 'package:sizer/sizer.dart';
 
 class RegistrationPage extends StatefulWidget {
   @override
@@ -13,7 +14,6 @@ class RegistrationPage extends StatefulWidget {
 }
 
 class _RegistrationPageState extends State<RegistrationPage> {
-  UserModel _userModel;
   TextEditingController userNameTEC = TextEditingController();
   TextEditingController emailTEC = TextEditingController();
   TextEditingController passwordTEC = TextEditingController();
@@ -21,13 +21,7 @@ class _RegistrationPageState extends State<RegistrationPage> {
   bool termsCheckBox = false;
   final GlobalKey<ScaffoldState> _scaffoldKey = new GlobalKey<ScaffoldState>();
   final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
-  String choosedRecoveryQuestion;
-  List<String> recoveryQuestions = [
-    'What is the name of your first pet?',
-    'Who was your childhood hero?',
-    'Where was your best family vacation as a kid?',
-  ];
-
+  final UserRepository userRepository = UserRepository();
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -55,33 +49,39 @@ class _RegistrationPageState extends State<RegistrationPage> {
                     CustomText(
                       text: 'Bitecope',
                       color: Colors.white,
-                      size: 7.0.w,
+                      size: 3.5 * SizeConfig.textMultiplier,
                       weight: FontWeight.bold,
                     )
                   ],
                 ),
                 Row(
                   children: [
-                    SizedBox(width: 4.0.w),
-                    Icon(Icons.arrow_back, color: Colors.white, size: 20.0.sp),
+                    SizedBox(width: 4.0 * SizeConfig.widthMultiplier),
+                    Icon(Icons.arrow_back,
+                        color: Colors.white,
+                        size: 7.0 * SizeConfig.imageSizeMultiplier),
                   ],
                 ),
               ],
             ),
             Padding(
-              padding: EdgeInsets.only(top: 5.0.h, left: 5.0.w),
+              padding: EdgeInsets.only(
+                  top: 5.0 * SizeConfig.heightMultiplier,
+                  left: 5.0 * SizeConfig.widthMultiplier),
               child: CustomText(
                 text: 'SIGN UP',
                 color: Colors.white,
                 weight: FontWeight.bold,
-                size: 11.0.sp,
+                size: 2.0 * SizeConfig.textMultiplier,
               ),
             ),
             SizedBox(
-              height: 4.0.h,
+              height: 2.0 * SizeConfig.heightMultiplier,
             ),
             Padding(
-              padding: EdgeInsets.only(left: 8.0.w, right: 8.0.w),
+              padding: EdgeInsets.only(
+                  left: 8.0 * SizeConfig.widthMultiplier,
+                  right: 8.0 * SizeConfig.widthMultiplier),
               child: Form(
                 key: _formKey,
                 child: Column(
@@ -96,9 +96,7 @@ class _RegistrationPageState extends State<RegistrationPage> {
                       iconData: Icons.account_box,
                       name: 'User Name*',
                       //initialValue: 'imssurya',
-                      onSaved: (value) {
-                        _userModel.userName = value;
-                      },
+
                       validator: (value) {
                         //^[a-z0-9_]{8,16}$
                         String patttern = r'(^[a-zA-Z0-9_]{8,16}$)';
@@ -111,7 +109,7 @@ class _RegistrationPageState extends State<RegistrationPage> {
                         return null;
                       },
                     ),
-                    SizedBox(height: 1.0.h),
+                    SizedBox(height: 1.0 * SizeConfig.heightMultiplier),
                     customTextFields(
                       controller: emailTEC,
                       keyboardType: TextInputType.emailAddress,
@@ -120,9 +118,7 @@ class _RegistrationPageState extends State<RegistrationPage> {
                       iconData: Icons.email,
                       name: 'Email*',
                       //initialValue: 'xyz@mail.com',
-                      onSaved: (value) {
-                        _userModel.email = value;
-                      },
+
                       validator: (value) {
                         String pattern =
                             r'^(([^<>()[\]\\.,;:\s@\"]+(\.[^<>()[\]\\.,;:\s@\"]+)*)|(\".+\"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$';
@@ -136,7 +132,7 @@ class _RegistrationPageState extends State<RegistrationPage> {
                         }
                       },
                     ),
-                    SizedBox(height: 1.0.h),
+                    SizedBox(height: 1.0 * SizeConfig.heightMultiplier),
                     customTextFields(
                       controller: passwordTEC,
                       keyboardType: TextInputType.text,
@@ -145,15 +141,13 @@ class _RegistrationPageState extends State<RegistrationPage> {
                       iconData: Icons.visibility,
                       name: 'Password*',
                       //initialValue: '***********',
-                      onSaved: (value) {
-                        _userModel.password = value;
-                      },
+
                       validator: (value) {
                         if (value.isEmpty) return 'Password is Required';
                         return null;
                       },
                     ),
-                    SizedBox(height: 1.0.h),
+                    SizedBox(height: 1.0 * SizeConfig.heightMultiplier),
                     customTextFields(
                       controller: confirmPasswordTEC,
                       keyboardType: TextInputType.text,
@@ -162,9 +156,7 @@ class _RegistrationPageState extends State<RegistrationPage> {
                       iconData: Icons.visibility,
                       name: 'Confirm Password*',
                       //initialValue: '***********',
-                      onSaved: (value) {
-                        _userModel.confirmPassword = value;
-                      },
+
                       validator: (value) {
                         if (value.isEmpty) return 'Password is Required Here';
                         if (value != passwordTEC.text)
@@ -176,9 +168,11 @@ class _RegistrationPageState extends State<RegistrationPage> {
                 ),
               ),
             ),
-            SizedBox(height: 2.0.h),
+            SizedBox(height: 1.0 * SizeConfig.heightMultiplier),
             Padding(
-              padding: EdgeInsets.only(left: 8.0.w, right: 8.0.w),
+              padding: EdgeInsets.only(
+                  left: 8.0 * SizeConfig.widthMultiplier,
+                  right: 8.0 * SizeConfig.widthMultiplier),
               child: Row(
                 children: <Widget>[
                   GestureDetector(
@@ -194,7 +188,7 @@ class _RegistrationPageState extends State<RegistrationPage> {
                       });
                     },
                   ),
-                  SizedBox(width: 1.5.w),
+                  SizedBox(width: 1.5 * SizeConfig.widthMultiplier),
                   RichText(
                     text: TextSpan(
                       children: [
@@ -215,9 +209,11 @@ class _RegistrationPageState extends State<RegistrationPage> {
                 ],
               ),
             ),
-            SizedBox(height: 2.0.h),
+            SizedBox(height: 1.0 * SizeConfig.heightMultiplier),
             Padding(
-              padding: EdgeInsets.only(left: 8.0.w, right: 8.0.w),
+              padding: EdgeInsets.only(
+                  left: 8.0 * SizeConfig.widthMultiplier,
+                  right: 8.0 * SizeConfig.widthMultiplier),
               child: RaisedButton(
                 child: Text(
                   'SIGN UP',
@@ -225,7 +221,8 @@ class _RegistrationPageState extends State<RegistrationPage> {
                 ),
                 color: Color(0xFFFF3799),
                 shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.all(Radius.circular(10.0.w))),
+                    borderRadius: BorderRadius.all(
+                        Radius.circular(10.0 * SizeConfig.widthMultiplier))),
                 onPressed: () {
                   if (_formKey.currentState.validate() && termsCheckBox) {
                     print('im okey');
@@ -235,7 +232,7 @@ class _RegistrationPageState extends State<RegistrationPage> {
                     return _scaffoldKey.currentState.showSnackBar(SnackBar(
                       content: Container(
                           color: Colors.transparent,
-                          height: 2.5.h,
+                          height: 2.5 * SizeConfig.heightMultiplier,
                           child: Center(
                             child: CustomText(
                                 text:
@@ -248,50 +245,54 @@ class _RegistrationPageState extends State<RegistrationPage> {
                 },
               ),
             ),
-            SizedBox(height: 3.0.h),
+            SizedBox(height: 1.0 * SizeConfig.heightMultiplier),
             Padding(
-              padding: EdgeInsets.only(left: 8.0.w, right: 8.0.w),
+              padding: EdgeInsets.only(
+                  left: 8.0 * SizeConfig.widthMultiplier,
+                  right: 8.0 * SizeConfig.widthMultiplier),
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.center,
                 crossAxisAlignment: CrossAxisAlignment.center,
                 children: [
                   Container(
-                    height: 0.18.h,
-                    width: 20.0.w,
+                    height: 0.18 * SizeConfig.heightMultiplier,
+                    width: 20.0 * SizeConfig.widthMultiplier,
                     color: Colors.white60,
                   ),
                   CustomText(
                     text: '  Or Connect With  ',
                     color: Colors.white60,
-                    size: 8.0.sp,
+                    size: 2.0 * SizeConfig.textMultiplier,
                   ),
                   Container(
-                    height: 0.18.h,
-                    width: 20.0.w,
+                    height: 0.18 * SizeConfig.heightMultiplier,
+                    width: 20.0 * SizeConfig.widthMultiplier,
                     color: Colors.white60,
                   ),
                 ],
               ),
             ),
-            SizedBox(height: 2.0.h),
+            SizedBox(height: 1.0 * SizeConfig.heightMultiplier),
             Row(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
                 socialMediaButtons(
                     icon: FontAwesomeIcons.facebookF, color: Colors.blue),
-                SizedBox(width: 3.0.w),
+                SizedBox(width: 3.0 * SizeConfig.widthMultiplier),
                 socialMediaButtons(
                     icon: FontAwesomeIcons.googlePlusG, color: Colors.red),
-                SizedBox(width: 3.0.w),
+                SizedBox(width: 3.0 * SizeConfig.widthMultiplier),
                 socialMediaButtons(
                     icon: FontAwesomeIcons.twitter, color: Color(0xFF1DA1F2)),
               ],
             ),
             SizedBox(
-              height: 2.0.h,
+              height: 1.0 * SizeConfig.heightMultiplier,
             ),
             Padding(
-              padding: EdgeInsets.only(left: 8.0.w, right: 8.0.w),
+              padding: EdgeInsets.only(
+                  left: 8.0 * SizeConfig.widthMultiplier,
+                  right: 8.0 * SizeConfig.widthMultiplier),
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
@@ -307,13 +308,21 @@ class _RegistrationPageState extends State<RegistrationPage> {
                           style: TextStyle(
                               color: Colors.red,
                               decoration: TextDecoration.underline),
-                          recognizer: TapGestureRecognizer()..onTap = () {},
+                          recognizer: TapGestureRecognizer()
+                            ..onTap = () {
+                              Navigator.of(context).push(MaterialPageRoute(
+                                  builder: (context) => LoginPage(
+                                      userRepository: userRepository)));
+                            },
                         ),
                       ],
                     ),
                   ),
                 ],
               ),
+            ),
+            SizedBox(
+              height: 2.0 * SizeConfig.heightMultiplier,
             ),
           ],
         ),
