@@ -5,6 +5,7 @@ import 'package:bitcope/features/login_register/presentation/pages/loginpage.dar
 import 'package:bitcope/features/splash/presentation/pages/splash_page.dart';
 import 'package:bitcope/core/widgets/loading_indicator.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
 import 'core/utils/sizeconfig.dart';
@@ -44,6 +45,10 @@ import 'core/utils/sizeconfig.dart';
 // }
 
 void main() {
+  WidgetsFlutterBinding.ensureInitialized();
+  SystemChrome.setPreferredOrientations(
+      [DeviceOrientation.portraitUp, DeviceOrientation.portraitDown]);
+
   final userRepository = UserRepository();
 
   runApp(BlocProvider<AuthenticationBloc>(
