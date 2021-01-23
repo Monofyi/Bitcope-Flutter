@@ -1,6 +1,7 @@
 import 'package:bitcope/features/authentication/bloc/authentication_bloc.dart';
 import 'package:bitcope/features/login_register/data/repository/user_repository.dart';
 import 'package:bitcope/features/login_register/presentation/bloc/login_bloc.dart';
+import 'package:bitcope/features/login_register/presentation/cubit/visibility_cubit.dart';
 import 'package:bitcope/features/login_register/presentation/pages/registrationpage.dart';
 import 'package:bitcope/core/utils/customtext.dart';
 import 'package:bitcope/core/utils/customtextfield.dart';
@@ -28,13 +29,20 @@ class _LoginPageState extends State<LoginPage> {
   IconData icon = Icons.visibility_off;
   @override
   Widget build(BuildContext context) {
-    return BlocProvider(
-      create: (context) {
-        return LoginBloc(
-          authenticationBloc: BlocProvider.of<AuthenticationBloc>(context),
-          userRepository: widget.userRepository,
-        );
-      },
+    return MultiBlocProvider(
+      providers: [
+        BlocProvider(
+          create: (context) {
+            return LoginBloc(
+              authenticationBloc: BlocProvider.of<AuthenticationBloc>(context),
+              userRepository: widget.userRepository,
+            );
+          },
+        ),
+        BlocProvider(
+          create: (_) => VisibilityCubit(),
+        ),
+      ],
       child: BlocListener<LoginBloc, LoginState>(
         listener: (BuildContext context, state) {
           if (state is LoginFaliure) {
@@ -46,6 +54,7 @@ class _LoginPageState extends State<LoginPage> {
           }
         },
         child: BlocBuilder<LoginBloc, LoginState>(builder: (context, state) {
+          final isVisible = context.watch<VisibilityCubit>().state;
           return Scaffold(
             key: _scaffoldKey,
             body: Container(
@@ -146,18 +155,20 @@ class _LoginPageState extends State<LoginPage> {
                               keyboardType: TextInputType.text,
                               context: context,
                               color: Colors.white24,
-                              iconData: Icons.visibility,
+                              iconData: isVisible
+                                  ? Icons.visibility
+                                  : Icons.visibility_off,
                               name: 'Password*',
                               validator: (value) {
                                 if (value.isEmpty)
                                   return 'Password is Required';
                                 return null;
                               },
-                              obscureText: state is ShowPassword ? false : true,
+                              obscureText: !isVisible,
                               iconTap: () {
-                                // widget.userRepository.showPasswordBool;
-                                BlocProvider.of<LoginBloc>(context)
-                                    .add(ShowPasswordEvent());
+                                context
+                                    .read<VisibilityCubit>()
+                                    .toggleVisibility();
                               }),
                           SizedBox(height: 1.0 * SizeConfig.heightMultiplier),
                         ],

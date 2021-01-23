@@ -12,11 +12,6 @@ class ShowProgressBarEvent extends LoginEvent {
   List<Object> get props => [showProgress];
 }
 
-class ShowPasswordEvent extends LoginEvent {
-  @override
-  List<Object> get props => [];
-}
-
 class LoginButtonPressed extends LoginEvent {
   final String username;
   final String password;
