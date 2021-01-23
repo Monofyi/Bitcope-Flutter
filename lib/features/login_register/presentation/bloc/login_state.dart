@@ -9,8 +9,6 @@ abstract class LoginState extends Equatable {
 
 class ShowProgressBar extends LoginState {}
 
-class ShowPassword extends LoginState {}
-
 class LoginInitial extends LoginState {}
 
 class LoginLoading extends LoginState {}

@@ -1,5 +1,5 @@
 import 'dart:async';
-import 'package:bitcope/features/login_register/data/datasources/bitecope_api_call.dart';
+import 'package:bitcope/features/login_register/data/datasources/bitecope_api_call_login_register.dart';
 import 'package:bitcope/features/login_register/data/model/token.dart';
 import 'package:bitcope/features/login_register/data/model/user_login.dart';
 import 'package:bitcope/features/login_register/data/model/user_model.dart';
@@ -10,7 +10,6 @@ import 'package:meta/meta.dart';
 
 class UserRepository {
   final userDatabaseOps = UserDatabaseOps();
-  bool showPasswordBool = false;
   Future<User> authenticate({
     @required String username,
     @required String password,
@@ -43,27 +42,4 @@ class UserRepository {
     bool showProgress = false;
     return showProgress;
   }
-
-  void flipBool() {
-    showPasswordBool = !showPasswordBool;
-    print(showPasswordBool);
-  }
-
-  IconData getPasswordIcon() {
-    print("get:" + showPasswordBool.toString());
-    if (showPasswordBool) {
-      return Icons.visibility;
-    } else {
-      return Icons.visibility_off;
-    }
-  }
-
-  // IconData showIcon({bool visible}) {
-  //   print("visible " + visible.toString());
-  //   if (visible) {
-  //     return Icons.visibility;
-  //   } else {
-  //     return Icons.visibility_off;
-  //   }
-  //}
 }

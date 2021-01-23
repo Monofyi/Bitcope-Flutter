@@ -39,9 +39,5 @@ class LoginBloc extends Bloc<LoginEvent, LoginState> {
         yield LoginFaliure(error: error.toString());
       }
     }
-    if (event is ShowPasswordEvent) {
-      userRepository.flipBool();
-      yield ShowPassword();
-    }
   }
 }
