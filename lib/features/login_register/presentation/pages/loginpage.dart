@@ -1,4 +1,4 @@
-import 'package:bitcope/features/authentication/bloc/authentication_bloc.dart';
+import 'package:bitcope/features/authentication/authentication_bloc.dart';
 import 'package:bitcope/features/login_register/data/repository/user_repository.dart';
 import 'package:bitcope/features/login_register/presentation/bloc/login_bloc.dart';
 import 'package:bitcope/features/login_register/presentation/cubit/visibility_cubit.dart';
@@ -52,6 +52,11 @@ class _LoginPageState extends State<LoginPage> {
               backgroundColor: Colors.red,
             ));
           }
+          if (state is LoginLoading) {
+            return Scaffold(
+              body: CircularProgressIndicator(),
+            );
+          }
         },
         child: BlocBuilder<LoginBloc, LoginState>(builder: (context, state) {
           final isVisible = context.watch<VisibilityCubit>().state;
@@ -85,14 +90,14 @@ class _LoginPageState extends State<LoginPage> {
                           )
                         ],
                       ),
-                      Row(
-                        children: [
-                          SizedBox(width: 4.0 * SizeConfig.widthMultiplier),
-                          Icon(Icons.arrow_back,
-                              color: Colors.white,
-                              size: 7.0 * SizeConfig.imageSizeMultiplier),
-                        ],
-                      ),
+                      // Row(
+                      //   children: [
+                      //     SizedBox(width: 4.0 * SizeConfig.widthMultiplier),
+                      //     Icon(Icons.arrow_back,
+                      //         color: Colors.white,
+                      //         size: 7.0 * SizeConfig.imageSizeMultiplier),
+                      //   ],
+                      // ),
                     ],
                   ),
                   Padding(
@@ -134,7 +139,7 @@ class _LoginPageState extends State<LoginPage> {
                               String pattern =
                                   r'^(([^<>()[\]\\.,;:\s@\"]+(\.[^<>()[\]\\.,;:\s@\"]+)*)|(\".+\"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$';
 
-                              String patttern_2 = r'(^[a-zA-Z0-9_]{5,16}$)';
+                              String patttern_2 = r'(^[a-zA-Z0-9_]{4,16}$)';
                               RegExp regExp = RegExp(
                                   value.toString().contains('@')
                                       ? pattern
@@ -333,10 +338,10 @@ class _LoginPageState extends State<LoginPage> {
                                     decoration: TextDecoration.underline),
                                 recognizer: TapGestureRecognizer()
                                   ..onTap = () {
-                                    Navigator.of(context).push(
-                                        MaterialPageRoute(
-                                            builder: (context) =>
-                                                RegistrationPage()));
+                                    // Navigator.of(context).push(
+                                    //     MaterialPageRoute(
+                                    //         builder: (context) =>
+                                    //             RegistrationPage()));
                                   },
                               ),
                             ],

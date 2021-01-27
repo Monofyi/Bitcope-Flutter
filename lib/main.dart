@@ -1,5 +1,5 @@
-import 'package:bitcope/features/homepage/presentation/pages/home_page.dart';
-import 'package:bitcope/features/authentication/bloc/authentication_bloc.dart';
+import 'package:bitcope/features/dashboard/presentation/pages/dashboard_page.dart';
+import 'package:bitcope/features/authentication/authentication_bloc.dart';
 import 'package:bitcope/features/login_register/data/repository/user_repository.dart';
 import 'package:bitcope/features/login_register/presentation/pages/loginpage.dart';
 import 'package:bitcope/features/splash/presentation/pages/splash_page.dart';
@@ -9,6 +9,8 @@ import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
 import 'core/utils/sizeconfig.dart';
+
+import 'features/qrcode_scan/presentation/pages/qrcode_scan_screen.dart';
 // void main() {
 //   runApp(MyApp());
 
@@ -84,12 +86,16 @@ class App extends StatelessWidget {
                   return SplashPage();
                 }
                 if (state is AuthenticationAuthenticated) {
-                  return HomePage();
+                  return Dashboard();
+                  return QRCodeScanner();
                 }
                 if (state is AuthenticationUnauthenticated) {
                   return LoginPage(
                     userRepository: userRepository,
                   );
+                }
+                if (state is AuthenticationLoading) {
+                  return LoadingIndicator();
                 }
                 return LoadingIndicator();
               },

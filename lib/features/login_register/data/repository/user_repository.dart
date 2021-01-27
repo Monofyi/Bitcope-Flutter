@@ -1,10 +1,9 @@
 import 'dart:async';
 import 'package:bitcope/features/login_register/data/datasources/bitecope_api_call_login_register.dart';
-import 'package:bitcope/features/login_register/data/model/token.dart';
+import 'package:bitcope/core/model/token.dart';
 import 'package:bitcope/features/login_register/data/model/user_login.dart';
 import 'package:bitcope/features/login_register/data/model/user_model.dart';
 import 'package:bitcope/core/database/user_database_operations.dart';
-
 import 'package:flutter/material.dart';
 import 'package:meta/meta.dart';
 
@@ -13,9 +12,10 @@ class UserRepository {
   Future<User> authenticate({
     @required String username,
     @required String password,
+    @required String url,
   }) async {
     UserLogin userLogin = UserLogin(username: username, password: password);
-    Token token = await getTokenUsingLogin(userLogin);
+    Token token = await getTokenUsingLogin(userLogin, url);
     User user = User(
       id: 0,
       username: username,
