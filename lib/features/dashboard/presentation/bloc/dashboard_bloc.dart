@@ -9,13 +9,13 @@ import 'package:meta/meta.dart';
 part 'dashboard_event.dart';
 part 'dashboard_state.dart';
 
-class DashboardBloc extends Bloc<DashboardEvent, DashboardState> {
-  DashboardBloc({@required this.dashboardRepository})
+class OTPBloc extends Bloc<DashboardEvent, OTPState> {
+  OTPBloc({@required this.dashboardRepository})
       : assert(DashboardRepository != null),
         super(DashboardInitial());
   final DashboardRepository dashboardRepository;
   @override
-  Stream<DashboardState> mapEventToState(
+  Stream<OTPState> mapEventToState(
     DashboardEvent event,
   ) async* {
     if (event is DashboardFetched) {

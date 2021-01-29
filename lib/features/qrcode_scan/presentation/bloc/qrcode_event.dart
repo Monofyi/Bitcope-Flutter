@@ -1,8 +1,9 @@
 part of 'qrcode_bloc.dart';
 
-abstract class QrcodeEvent extends Equatable {
-  const QrcodeEvent();
+abstract class QrcodeEvent {}
 
-  @override
-  List<Object> get props => [];
-}
+class QRScanButtonPressed extends QrcodeEvent {}
+
+class QRValidateButtonPressed extends QrcodeEvent {}
+
+class CheckBoxClicked extends QrcodeEvent {}

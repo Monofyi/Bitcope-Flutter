@@ -16,10 +16,11 @@ Future<DashboardList> getDashBoardData({String token, String url}) async {
 
       return DashboardList.fromJson(json.decode(response.body));
     } else {
-      print(json.decode(response.body).toString());
+      //print(json.decode(response.body).toString());
       throw Exception(json.decode(response.body));
     }
   } catch (e) {
     print(e.toString());
   }
+  return null;
 }

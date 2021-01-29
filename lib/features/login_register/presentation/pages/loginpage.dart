@@ -2,7 +2,6 @@ import 'package:bitcope/features/authentication/authentication_bloc.dart';
 import 'package:bitcope/features/login_register/data/repository/user_repository.dart';
 import 'package:bitcope/features/login_register/presentation/bloc/login_bloc.dart';
 import 'package:bitcope/features/login_register/presentation/cubit/visibility_cubit.dart';
-import 'package:bitcope/features/login_register/presentation/pages/registrationpage.dart';
 import 'package:bitcope/core/utils/customtext.dart';
 import 'package:bitcope/core/utils/customtextfield.dart';
 import 'package:bitcope/core/utils/sizeconfig.dart';
@@ -46,11 +45,13 @@ class _LoginPageState extends State<LoginPage> {
       child: BlocListener<LoginBloc, LoginState>(
         listener: (BuildContext context, state) {
           if (state is LoginFaliure) {
-            _scaffoldKey.currentState.showSnackBar(SnackBar(
-              duration: Duration(milliseconds: 1200),
-              content: Text('${state.error}'),
-              backgroundColor: Colors.red,
-            ));
+            _scaffoldKey.currentState.showSnackBar(
+              SnackBar(
+                duration: Duration(milliseconds: 1200),
+                content: Text('${state.error}'),
+                backgroundColor: Colors.red,
+              ),
+            );
           }
           if (state is LoginLoading) {
             return Scaffold(
