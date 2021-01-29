@@ -1,10 +1,20 @@
 part of 'qrcode_bloc.dart';
 
-abstract class QrcodeState extends Equatable {
-  const QrcodeState();
+abstract class QrcodeState {}
 
-  @override
-  List<Object> get props => [];
+class QrcodeInitial extends QrcodeState {
+  QrcodeInitial();
 }
 
-class QrcodeInitial extends QrcodeState {}
+class QrcodeAdded extends QrcodeState {
+  final List<String> qrListForPL;
+  QrcodeAdded({@required this.qrListForPL});
+}
+
+class QRIsInvalid extends QrcodeState {
+  QRIsInvalid();
+}
+
+class QRIsDuplicate extends QrcodeState {
+  QRIsDuplicate();
+}

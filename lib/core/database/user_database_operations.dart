@@ -49,4 +49,25 @@ class UserDatabaseOps {
     }
     return token;
   }
+
+  Future<String> getUserName(int id) async {
+    final db = await dbProvider.database;
+    String token = '';
+    try {
+      List<Map> userName = await db.query(userTable,
+          columns: ['username'],
+          distinct: true,
+          where: 'id = ?',
+          whereArgs: [id]);
+      if (userName.length > 0) {
+        token = userName.toList().first["username"];
+        print(userName);
+      } else {
+        token = "check your damn code surya";
+      }
+    } catch (error) {
+      return error.toString();
+    }
+    return token;
+  }
 }

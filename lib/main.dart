@@ -10,7 +10,6 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 
 import 'core/utils/sizeconfig.dart';
 
-import 'features/qrcode_scan/presentation/pages/qrcode_scan_screen.dart';
 // void main() {
 //   runApp(MyApp());
 
@@ -87,7 +86,6 @@ class App extends StatelessWidget {
                 }
                 if (state is AuthenticationAuthenticated) {
                   return Dashboard();
-                  return QRCodeScanner();
                 }
                 if (state is AuthenticationUnauthenticated) {
                   return LoginPage(
