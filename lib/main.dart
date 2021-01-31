@@ -63,7 +63,9 @@ class App extends StatelessWidget {
                 if (state is AuthenticationLoading) {
                   return LoadingIndicator();
                 }
-                return LoadingIndicator();
+                return LoginPage(
+                  userRepository: userRepository,
+                );
               },
             ),
           );
