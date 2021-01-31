@@ -1,3 +1,5 @@
+import 'dart:io';
+
 import 'package:bitcope/features/dashboard/presentation/pages/dashboard_page.dart';
 import 'package:bitcope/features/authentication/authentication_bloc.dart';
 import 'package:bitcope/features/login_register/data/repository/user_repository.dart';
@@ -10,42 +12,8 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 
 import 'core/utils/sizeconfig.dart';
 
-// void main() {
-//   runApp(MyApp());
-
-// }
-
-// class MyApp extends StatelessWidget {
-//   @override
-//   Widget build(BuildContext context) {
-//     return LayoutBuilder(
-//       builder: (context, constraints) {
-//         return OrientationBuilder(
-//           builder: (context, orientation) {
-//             SizeConfig().init(constraints, orientation);
-//             return MultiProvider(
-//                 providers: [
-//                   ChangeNotifierProvider.value(
-//                       value: AccountProvider.initialize()),
-//                 ],
-//                 child: MaterialApp(
-//                   debugShowCheckedModeBanner: false,
-//                   title: 'Flutter App',
-//                   theme: ThemeData(
-//                     primarySwatch: Colors.blueGrey,
-//                     brightness: Brightness.light,
-//                     visualDensity: VisualDensity.adaptivePlatformDensity,
-//                   ),
-//                   home: LoginPage(),
-//                 ));
-//           },
-//         );
-//       },
-//     );
-//   }
-// }
-
 void main() {
+  HttpOverrides.global = MyHttpOverrides();
   WidgetsFlutterBinding.ensureInitialized();
   SystemChrome.setPreferredOrientations(
       [DeviceOrientation.portraitUp, DeviceOrientation.portraitDown]);
@@ -102,5 +70,14 @@ class App extends StatelessWidget {
         });
       },
     );
+  }
+}
+
+class MyHttpOverrides extends HttpOverrides {
+  @override
+  HttpClient createHttpClient(SecurityContext context) {
+    return super.createHttpClient(context)
+      ..badCertificateCallback =
+          (X509Certificate cert, String host, int port) => true;
   }
 }
