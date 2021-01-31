@@ -9,7 +9,7 @@ final fileUrl =
 Future<String> downloadServerDetailsFile() async {
   try {
     String fullPath = await getFilePath();
-    print('full path $fullPath');
+    //print('full path $fullPath');
 
     Response response = await dio.get(
       fileUrl,
@@ -21,6 +21,8 @@ Future<String> downloadServerDetailsFile() async {
           }),
     );
     print(response.headers);
+    print(response.data);
+
     File file = File(fullPath);
     var raf = file.openSync(mode: FileMode.write);
     // response.data is List<int> type

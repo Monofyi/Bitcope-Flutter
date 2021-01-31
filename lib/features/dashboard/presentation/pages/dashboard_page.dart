@@ -14,11 +14,6 @@ import 'package:intl/intl.dart';
 DashboardList dashboardList;
 
 class Dashboard extends StatelessWidget {
-  // final UserDatabaseOps userDatabaseOps = UserDatabaseOps();
-  // Future<String> getToken() async {
-  //   return await userDatabaseOps.getUserToken(0);
-  // }
-
   @override
   Widget build(BuildContext context) {
     //HDTRefreshController _hdtRefreshController = HDTRefreshController();

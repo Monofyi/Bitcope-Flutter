@@ -1,26 +1,24 @@
-import 'dart:convert';
+import 'package:bitcope/features/sendotp/data/model/order_status.dart';
+import 'package:bitcope/features/sendotp/data/model/order_status_response.dart';
 import 'package:bitcope/features/sendotp/data/model/otp_model.dart';
 import 'package:bitcope/features/sendotp/data/model/otp_response_model.dart';
 import 'package:bitcope/features/sendotp/data/model/otp_verify_model.dart';
-import 'package:http/http.dart' as http;
+import 'package:dio/dio.dart';
 
 Future<OTPResponseModel> getOTP(
     {String token, String url, OTPModel otpModel}) async {
+  Dio _dio = Dio();
   try {
-    final http.Response response = await http.post(
-      Uri.parse(url),
-      headers: <String, String>{
-        'Content-Type': 'application/json; charset=UTF-8',
-        'Authorization': 'Token' + ' ' + token,
-      },
-      body: json.encode(otpModel.toJson()),
+    _dio.options.headers["Authorization"] = "token $token";
+
+    final Response response = await _dio.post(
+      url,
+      data: otpModel.toJson(),
     );
     if (response.statusCode == 200) {
-      //final data=
-
-      return OTPResponseModel.fromJson(json.decode(response.body));
+      return OTPResponseModel.fromJson(response.data);
     } else {
-      throw Exception(json.decode(response.body));
+      throw Exception(response.data);
     }
   } catch (e) {
     print(e.toString());
@@ -30,20 +28,35 @@ Future<OTPResponseModel> getOTP(
 
 Future<OTPResponseModel> verifyOTP(
     {String token, String url, OTPVerifyModel otpVerifyModel}) async {
+  Dio _dio = Dio();
+
   try {
-    final http.Response response = await http.post(
-      Uri.parse(url),
-      headers: <String, String>{
-        'Authorization': 'Token' + ' ' + token,
-      },
-      body: json.encode(otpVerifyModel.toJson()),
+    _dio.options.headers["Authorization"] = "token $token";
+    final Response response = await _dio.post(
+      url,
+      data: otpVerifyModel.toJson(),
     );
     if (response.statusCode == 200) {
-      //final data=
+      return OTPResponseModel.fromJson(response.data);
+    }
+  } catch (e) {
+    print(e.toString());
+  }
+  return null;
+}
 
-      return OTPResponseModel.fromJson(json.decode(response.body));
-    } else if (response.statusCode == 400) {
-      return OTPResponseModel.fromJson(json.decode(response.body));
+Future<OrderResponseModel> orderStatus(
+    {String token, String url, OrderModel orderModel}) async {
+  Dio _dio = Dio();
+
+  try {
+    _dio.options.headers["Authorization"] = "token $token";
+    final Response response = await _dio.put(
+      url,
+      data: orderModel.toJson(),
+    );
+    if (response.statusCode == 200) {
+      return OrderResponseModel.fromJson(response.data);
     }
   } catch (e) {
     print(e.toString());

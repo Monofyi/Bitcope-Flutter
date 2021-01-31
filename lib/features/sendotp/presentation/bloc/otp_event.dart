@@ -16,6 +16,6 @@ class GetOTPButtonPressed extends OTPEvent {
 
 class VerifyOTPButtonPressed extends OTPEvent {
   final String otp;
-
-  VerifyOTPButtonPressed({@required this.otp});
+  final String transactionId;
+  VerifyOTPButtonPressed({@required this.otp, @required this.transactionId});
 }

@@ -21,7 +21,8 @@ class AuthenticationBloc
     AuthenticationEvent event,
   ) async* {
     if (event is AppStarted) {
-      yield AuthenticationLoading();
+      //commenting this code because of release issue
+      //yield AuthenticationLoading();
       final bool hasToken = await userRepository.hasToken();
 
       if (hasToken) {

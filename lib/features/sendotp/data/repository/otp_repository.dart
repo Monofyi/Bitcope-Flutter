@@ -1,5 +1,7 @@
 import 'package:bitcope/core/database/user_database_operations.dart';
 import 'package:bitcope/core/server_switch/server_switch.dart';
+import 'package:bitcope/features/sendotp/data/model/order_status.dart';
+import 'package:bitcope/features/sendotp/data/model/order_status_response.dart';
 import 'package:bitcope/features/sendotp/data/model/otp_model.dart';
 import 'package:bitcope/features/sendotp/data/model/otp_response_model.dart';
 import 'package:bitcope/features/sendotp/data/model/otp_verify_model.dart';
@@ -31,6 +33,16 @@ class OTPRepository {
     OTPResponseModel otpResponseModel =
         await verifyOTP(url: url, token: token, otpVerifyModel: otpVerifyModel);
     return otpResponseModel;
+  }
+
+  Future<OrderResponseModel> orderSuccessResponse(
+      {@required String token,
+      @required String url,
+      @required String orderId}) async {
+    OrderModel orderModel = OrderModel(orderId: orderId);
+    OrderResponseModel orderResponseModel =
+        await orderStatus(url: url, token: token, orderModel: orderModel);
+    return orderResponseModel;
   }
 
   Future<String> getUrlForSentOTP() async {

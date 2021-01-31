@@ -1,23 +1,18 @@
 import 'dart:convert';
-import 'package:http/http.dart' as http;
 import 'package:bitcope/features/dashboard/data/model/dashboard_model.dart';
+import 'package:dio/dio.dart';
 
 Future<DashboardList> getDashBoardData({String token, String url}) async {
+  Dio _dio = Dio();
   try {
-    final http.Response response = await http.get(
-      Uri.parse(url),
-      headers: <String, String>{
-        'Authorization': 'Token' + ' ' + token,
-      },
-      //body: Token(token: token).toJson(),
-    );
+    //_dio.options.headers['content-Type'] = 'application/json';
+    _dio.options.headers["Authorization"] = "token $token";
+    //response = await dio.post(url, data: data);
+    final Response response = await _dio.get(url);
     if (response.statusCode == 200) {
-      //final data=
-
-      return DashboardList.fromJson(json.decode(response.body));
+      return DashboardList.fromJson(response.data);
     } else {
-      //print(json.decode(response.body).toString());
-      throw Exception(json.decode(response.body));
+      throw Exception(json.decode(response.data));
     }
   } catch (e) {
     print(e.toString());

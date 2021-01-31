@@ -233,8 +233,8 @@ class OTPPage extends StatelessWidget {
                           if (_formKey.currentState.validate()) {
                             BlocProvider.of<OTPBloc>(context).add(
                               VerifyOTPButtonPressed(
-                                otp: (_phoneNoController.text),
-                              ),
+                                  otp: (_phoneNoController.text),
+                                  transactionId: transactionId),
                             );
                           }
                         },
