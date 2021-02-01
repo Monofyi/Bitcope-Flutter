@@ -5,8 +5,9 @@ import 'package:bloc/bloc.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:meta/meta.dart';
 import 'package:equatable/equatable.dart';
-import 'package:permission_handler/permission_handler.dart';
+
 import 'package:bitcope/core/server_switch/server_switch.dart' as ss;
+import 'package:permission_handler/permission_handler.dart';
 part 'login_event.dart';
 part 'login_state.dart';
 
@@ -30,10 +31,9 @@ class LoginBloc extends Bloc<LoginEvent, LoginState> {
       yield ShowProgressBar();
 
       try {
-        PermissionStatus _permissionStatus = PermissionStatus.unknown;
+        PermissionStatus _permissionStatus = await Permission.storage.status;
         if (_permissionStatus != PermissionStatus.granted) {
-          await PermissionHandler()
-              .requestPermissions([PermissionGroup.storage]);
+          Permission.storage.request();
         }
         final bool hasFile = await ss.hasFile();
         print('file is :' + hasFile.toString());
