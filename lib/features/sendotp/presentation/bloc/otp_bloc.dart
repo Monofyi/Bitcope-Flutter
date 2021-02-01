@@ -18,6 +18,7 @@ class OTPBloc extends Bloc<OTPEvent, OTPState> {
     OTPEvent event,
   ) async* {
     if (event is GetOTPButtonPressed) {
+      yield LoadProgressBar();
       try {
         String token = await otpRepository.getTokenForSentOTP();
         String url = Uri.https(
@@ -43,6 +44,7 @@ class OTPBloc extends Bloc<OTPEvent, OTPState> {
       } catch (e) {}
     }
     if (event is VerifyOTPButtonPressed) {
+      yield LoadProgressBar();
       try {
         String token = await otpRepository.getTokenForSentOTP();
         String urlValidateOtp = Uri.https(
