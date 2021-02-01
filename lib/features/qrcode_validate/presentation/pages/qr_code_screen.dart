@@ -52,8 +52,26 @@ class QrValidationScreen extends StatelessWidget {
             builder: (context, state) {
               if (state is QrcodeValidateInitial) {
                 return Container(
-                  color: Colors.grey[200],
-                  child: CircularProgressIndicator(),
+                  width: MediaQuery.of(context).size.width,
+                  height: MediaQuery.of(context).size.height,
+                  decoration: BoxDecoration(
+                    gradient: LinearGradient(
+                      begin: Alignment.centerLeft,
+                      end: Alignment.centerRight,
+                      //stops: [0.3, 0.6, .9],
+                      colors: [
+                        Color(0xff993164),
+                        Color(0xff6E3869),
+                        Color(0xff323F6C),
+                      ],
+                    ),
+                  ),
+                  child: Column(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      CircularProgressIndicator(),
+                    ],
+                  ),
                 );
               }
               if (state is QrcodeValidated) {
