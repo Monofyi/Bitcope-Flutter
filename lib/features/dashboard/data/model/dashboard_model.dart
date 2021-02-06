@@ -5,6 +5,7 @@ class Dashboard {
   String deliveryStatus;
   String deliveryAgent;
   String timestamp;
+  String retailerName;
 
   Dashboard(
       {this.transactionId,
@@ -12,7 +13,8 @@ class Dashboard {
       this.location,
       this.deliveryStatus,
       this.deliveryAgent,
-      this.timestamp});
+      this.timestamp,
+      this.retailerName});
 
   Dashboard.fromJson(Map<String, dynamic> json) {
     transactionId = json['transaction_id'];
@@ -21,6 +23,7 @@ class Dashboard {
     deliveryStatus = json['deliveryStatus'];
     deliveryAgent = json['deliveryAgent'];
     timestamp = json['timestamp'];
+    retailerName = json['retailer_name'];
   }
 
   Map<String, dynamic> toJson() {
@@ -31,6 +34,7 @@ class Dashboard {
     data['deliveryStatus'] = this.deliveryStatus;
     data['deliveryAgent'] = this.deliveryAgent;
     data['timestamp'] = this.timestamp;
+    data['retailer_name'] = this.retailerName;
     return data;
   }
 }

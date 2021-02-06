@@ -30,6 +30,7 @@ class OTPBloc extends Bloc<OTPEvent, OTPState> {
             .trim();
 
         final otpResponse = await otpRepository.otpValidationResponse(
+            retailerName: event.retailerName,
             phoneno: event.phoneno,
             token: token,
             transactionid: event.transactionId,

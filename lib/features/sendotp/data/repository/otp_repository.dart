@@ -11,13 +11,17 @@ import 'package:bitcope/features/sendotp/data/datasources/bitecope_api_call_send
 class OTPRepository {
   String sessionId;
   final userDatabaseOps = UserDatabaseOps();
-  Future<OTPResponseModel> otpValidationResponse(
-      {@required String token,
-      @required String url,
-      @required int phoneno,
-      @required String transactionid}) async {
-    OTPModel otpModel =
-        OTPModel(phoneno: phoneno, transactionid: transactionid.toString());
+  Future<OTPResponseModel> otpValidationResponse({
+    @required String token,
+    @required String url,
+    @required int phoneno,
+    @required String transactionid,
+    @required String retailerName,
+  }) async {
+    OTPModel otpModel = OTPModel(
+        phoneno: phoneno,
+        transactionid: transactionid.toString(),
+        retailerName: retailerName);
     OTPResponseModel otpResponseModel =
         await getOTP(url: url, token: token, otpModel: otpModel);
     sessionId = otpResponseModel.details;
