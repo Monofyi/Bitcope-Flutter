@@ -8,4 +8,3 @@
 Creating Communication Channels between Distrubuters and Manufacturers
 
 ## Getting Started
-
