@@ -148,7 +148,10 @@ class Dashboard extends StatelessWidget {
                                             ),
                                             title: Text(
                                               dashboardList.dashboardList[index]
-                                                  .deliveryStatus,
+                                                          .deliveryStatus ==
+                                                      'Delivered'
+                                                  ? '  ${dashboardList.dashboardList[index].deliveryStatus} to : ${dashboardList.dashboardList[index].retailerName}'
+                                                  : '${dashboardList.dashboardList[index].deliveryStatus}',
                                               style: TextStyle(
                                                   color: Colors.black),
                                             ),

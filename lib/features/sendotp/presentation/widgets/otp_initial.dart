@@ -9,6 +9,7 @@ Widget otpInitial(
     {@required BuildContext context,
     @required Function onPressed,
     @required TextEditingController phoneController,
+    @required TextEditingController textController,
     Key formKey}) {
   return SingleChildScrollView(
     child: SafeArea(
@@ -89,26 +90,51 @@ Widget otpInitial(
                         vertical: 2.5 * SizeConfig.heightMultiplier),
                     child: Form(
                       key: formKey,
-                      child: customTextFields(
-                        controller: phoneController,
-                        keyboardType: TextInputType.phone,
-                        context: context,
-                        color: Colors.white24,
-                        iconData: FontAwesomeIcons.phone,
-                        name: 'Phone number*',
-                        validator: (value) {
-                          RegExp regExp = new RegExp(
-                            r"(\+\d{1,2}\s)?\(?\d{3}\)?[\s.-]?\d{3}[\s.-]?\d{4}$",
-                          );
-                          if (value.length == 0) {
-                            return "Phone no is Required";
-                          } else if (!regExp.hasMatch(value)) {
-                            return "Phone no is invalid";
-                          } else {
-                            return null;
-                          }
-                        },
-                        obscureText: false,
+                      child: Column(
+                        children: [
+                          customTextFields(
+                            controller: phoneController,
+                            keyboardType: TextInputType.phone,
+                            context: context,
+                            color: Colors.white24,
+                            iconData: FontAwesomeIcons.phone,
+                            name: 'Phone number*',
+                            validator: (value) {
+                              RegExp regExp = new RegExp(
+                                r"(\+\d{1,2}\s)?\(?\d{3}\)?[\s.-]?\d{3}[\s.-]?\d{4}$",
+                              );
+                              if (value.length == 0) {
+                                return "Phone no is Required";
+                              } else if (!regExp.hasMatch(value)) {
+                                return "Phone no is invalid";
+                              } else {
+                                return null;
+                              }
+                            },
+                            obscureText: false,
+                          ),
+                          customTextFields(
+                            controller: textController,
+                            keyboardType: TextInputType.name,
+                            context: context,
+                            color: Colors.white24,
+                            iconData: FontAwesomeIcons.user,
+                            name: 'Retailer Name*',
+                            validator: (value) {
+                              RegExp regExp = new RegExp(
+                                r"^[a-zA-Z]+(([',. -][a-zA-Z ])?[a-zA-Z]*)*$",
+                              );
+                              if (value.length == 0) {
+                                return "Retailer Name is Required";
+                              } else if (!regExp.hasMatch(value)) {
+                                return "Retailer Name is invalid";
+                              } else {
+                                return null;
+                              }
+                            },
+                            obscureText: false,
+                          ),
+                        ],
                       ),
                     ),
                   ),

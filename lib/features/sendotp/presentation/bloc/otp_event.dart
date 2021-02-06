@@ -10,8 +10,12 @@ abstract class OTPEvent extends Equatable {
 class GetOTPButtonPressed extends OTPEvent {
   final int phoneno;
   final String transactionId;
+  final String retailerName;
 
-  GetOTPButtonPressed({@required this.phoneno, @required this.transactionId});
+  GetOTPButtonPressed(
+      {@required this.phoneno,
+      @required this.transactionId,
+      @required this.retailerName});
 }
 
 class VerifyOTPButtonPressed extends OTPEvent {
