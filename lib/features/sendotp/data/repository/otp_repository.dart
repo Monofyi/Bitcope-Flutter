@@ -1,4 +1,6 @@
 import 'package:bitcope/core/database/user_database_operations.dart';
+import 'package:bitcope/core/error_handling/api_result.dart';
+import 'package:bitcope/core/error_handling/network_exceptions.dart';
 import 'package:bitcope/core/server_switch/server_switch.dart';
 import 'package:bitcope/features/sendotp/data/model/order_status.dart';
 import 'package:bitcope/features/sendotp/data/model/order_status_response.dart';
@@ -11,7 +13,7 @@ import 'package:bitcope/features/sendotp/data/datasources/bitecope_api_call_send
 class OTPRepository {
   String sessionId;
   final userDatabaseOps = UserDatabaseOps();
-  Future<OTPResponseModel> otpValidationResponse({
+  Future<ApiResult<OTPResponseModel>> otpValidationResponse({
     @required String token,
     @required String url,
     @required int phoneno,
@@ -22,31 +24,55 @@ class OTPRepository {
         phoneno: phoneno,
         transactionid: transactionid.toString(),
         retailerName: retailerName);
-    OTPResponseModel otpResponseModel =
+    ApiResult<OTPResponseModel> otpResponseModel =
         await getOTP(url: url, token: token, otpModel: otpModel);
-    sessionId = otpResponseModel.details;
-    return otpResponseModel;
+
+    return otpResponseModel.when(
+      success: (otpResponseModel) {
+        sessionId = otpResponseModel.details;
+        return ApiResult.success(data: otpResponseModel);
+      },
+      failure: (NetworkExceptions error) {
+        return ApiResult.failure(error: error);
+      },
+    );
   }
 
-  Future<OTPResponseModel> otpVerifyResponse(
+  Future<ApiResult<OTPResponseModel>> otpVerifyResponse(
       {@required String token,
       @required String url,
       @required String otp}) async {
     OTPVerifyModel otpVerifyModel =
         OTPVerifyModel(otp: otp, transactionid: sessionId.toString());
-    OTPResponseModel otpResponseModel =
+    ApiResult<OTPResponseModel> otpResponseModel =
         await verifyOTP(url: url, token: token, otpVerifyModel: otpVerifyModel);
-    return otpResponseModel;
+    return otpResponseModel.when(
+      success: (otpResponseModel) {
+        sessionId = otpResponseModel.details;
+        return ApiResult.success(data: otpResponseModel);
+      },
+      failure: (NetworkExceptions error) {
+        return ApiResult.failure(error: error);
+      },
+    );
   }
 
-  Future<OrderResponseModel> orderSuccessResponse(
+  Future<ApiResult<OrderResponseModel>> orderSuccessResponse(
       {@required String token,
       @required String url,
       @required String orderId}) async {
     OrderModel orderModel = OrderModel(orderId: orderId);
-    OrderResponseModel orderResponseModel =
+    ApiResult<OrderResponseModel> orderResponseModel =
         await orderStatus(url: url, token: token, orderModel: orderModel);
-    return orderResponseModel;
+
+    return orderResponseModel.when(
+      success: (orderResponseModel) {
+        return ApiResult.success(data: orderResponseModel);
+      },
+      failure: (NetworkExceptions error) {
+        return ApiResult.failure(error: error);
+      },
+    );
   }
 
   Future<String> getUrlForSentOTP() async {

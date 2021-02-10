@@ -40,7 +40,7 @@ class Dashboard extends StatelessWidget {
         providers: [
           BlocProvider(
             create: (context) {
-              return OTPBloc(
+              return DashboardBloc(
                 dashboardRepository: dashboardRepository,
               )..add(DashboardFetched());
             },
@@ -51,7 +51,7 @@ class Dashboard extends StatelessWidget {
             },
           ),
         ],
-        child: BlocBuilder<OTPBloc, OTPState>(
+        child: BlocBuilder<DashboardBloc, DashboardState>(
           builder: (context, state) {
             if (state is DashboardInitial) {
               return Center(
@@ -61,170 +61,253 @@ class Dashboard extends StatelessWidget {
             if (state is DashboardLoaded) {
               dashboardList = state.dashboardList;
               //print(state.dashboardList.dashboardList.length.toString());
-              return Container(
-                color: Colors.white,
-                child: Column(
-                  children: [
-                    ListTile(
-                      onTap: null,
-                      title: Text(
-                        'Transaction History',
-                        style: TextStyle(color: Colors.black),
-                      ),
-                    ),
-                    Expanded(
-                      child: ListView.builder(
-                        // shrinkWrap: true,
-                        // scrollDirection: Axis.horizontal,
-                        itemCount: dashboardList.dashboardList.length,
-                        itemBuilder: (BuildContext context, index) {
-                          return Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              Padding(
-                                  padding: const EdgeInsets.only(
-                                    left: 8.0,
-                                    right: 8.0,
-                                  ),
-                                  child: Stack(
-                                    children: <Widget>[
-                                      Container(
-                                        height: 80,
-                                        width:
-                                            MediaQuery.of(context).size.width -
-                                                16 -
-                                                10,
-                                        color: Colors.grey[200],
-                                        child: Center(
-                                          child: ListTile(
-                                            leading: Container(
-                                              width: 60,
-                                              height: 60,
-                                              color: Colors.white,
-                                              child: Center(
-                                                child: Column(
-                                                  mainAxisAlignment:
-                                                      MainAxisAlignment.center,
-                                                  children: [
-                                                    Text(
-                                                      DateFormat.MMM().format(
-                                                          DateTime.parse(
-                                                              dashboardList
-                                                                  .dashboardList[
-                                                                      index]
-                                                                  .timestamp)),
-                                                      style: TextStyle(
-                                                          color: Colors.black),
-                                                    ),
-                                                    Text(
-                                                      DateFormat.d().format(
-                                                          DateTime.parse(
-                                                              dashboardList
-                                                                  .dashboardList[
-                                                                      index]
-                                                                  .timestamp)),
-                                                      style: TextStyle(
-                                                          color: Colors.black),
-                                                    ),
-                                                    Text(
-                                                      DateFormat.y().format(
-                                                          DateTime.parse(
-                                                              dashboardList
-                                                                  .dashboardList[
-                                                                      index]
-                                                                  .timestamp)),
-                                                      style: TextStyle(
-                                                          color: Colors.black),
-                                                    ),
-                                                  ],
-                                                ),
-                                              ),
-                                            ),
-                                            subtitle: Text(
-                                              dashboardList.dashboardList[index]
-                                                  .deliveryAgent,
-                                              style: TextStyle(
-                                                  color: Colors.black),
-                                            ),
-                                            title: Text(
-                                              dashboardList.dashboardList[index]
-                                                          .deliveryStatus ==
-                                                      'Delivered'
-                                                  ? '  ${dashboardList.dashboardList[index].deliveryStatus} to : ${dashboardList.dashboardList[index].retailerName}'
-                                                  : '${dashboardList.dashboardList[index].deliveryStatus}',
-                                              style: TextStyle(
-                                                  color: Colors.black),
-                                            ),
-                                            trailing: Text(
-                                              "Total Crates: " +
-                                                  dashboardList
-                                                      .dashboardList[index]
-                                                      .crateId
-                                                      .split(',')
-                                                      .length
-                                                      .toString(),
-                                              style: TextStyle(
-                                                  color: Colors.black),
-                                            ),
-                                          ),
-                                        ),
-                                      ),
-                                      Align(
-                                        alignment: Alignment.bottomLeft,
-                                        child: Container(
-                                          height: 80,
-                                          width: 5,
-                                          color: dashboardList
-                                                      .dashboardList[index]
-                                                      .deliveryStatus ==
-                                                  "Delivered"
-                                              ? Colors.green
-                                              : Colors.red,
-                                        ),
-                                      ),
-                                    ],
-                                  )),
-                              Divider(
-                                thickness: 0.0,
-                              ),
-                            ],
-                          );
-                        },
-                      ),
-                    ),
-                    Container(
-                      height: 80,
-                      child: Padding(
-                        padding: const EdgeInsets.all(8.0),
-                        child: RaisedButton(
-                          child: Row(
-                            mainAxisAlignment: MainAxisAlignment.center,
-                            children: [
-                              Text(
-                                'SCAN CRATES',
-                                style: TextStyle(
-                                    color: Colors.white, fontSize: 20),
-                              ),
-                            ],
+              return dashboardList.dashboardList.length == 0
+                  ? RefreshIndicator(
+                      onRefresh: () async {
+                        BlocProvider.of<DashboardBloc>(context)
+                            .add(RefreshButtonPressed());
+                      },
+                      child: SingleChildScrollView(
+                        physics: AlwaysScrollableScrollPhysics(
+                            parent: BouncingScrollPhysics()),
+                        child: Container(
+                          height: MediaQuery.of(context).size.height,
+                          decoration: BoxDecoration(
+                            gradient: LinearGradient(
+                              begin: Alignment.centerLeft,
+                              end: Alignment.centerRight,
+                              //stops: [0.3, 0.6, .9],
+                              colors: [
+                                Color(0xff993164),
+                                Color(0xff6E3869),
+                                Color(0xff323F6C),
+                              ],
+                            ),
                           ),
-                          color: Color(0xFFFF3799),
-                          // shape: RoundedRectangleBorder(
-                          //     borderRadius: BorderRadius.all(Radius.circular(
-                          //         10.0 * SizeConfig.widthMultiplier))),
-                          onPressed: () {
-                            // BlocProvider.of<QrcodeBloc>(context)
-                            //     .add(QRScanButtonPressed());
-                            Navigator.of(context).push(MaterialPageRoute(
-                                builder: (context) => QrCodeScreen()));
-                          },
+                          child: Padding(
+                            padding: const EdgeInsets.all(15.0),
+                            child: Text(
+                              'Currently there is no transaction is available! pull down to refresh',
+                              style: TextStyle(fontSize: 20),
+                            ),
+                          ),
                         ),
                       ),
                     )
-                  ],
+                  : RefreshIndicator(
+                      onRefresh: () async {
+                        BlocProvider.of<DashboardBloc>(context)
+                            .add(RefreshButtonPressed());
+                      },
+                      child: Container(
+                        color: Colors.white,
+                        child: Column(
+                          children: [
+                            ListTile(
+                              onTap: null,
+                              title: Text(
+                                'Transaction History',
+                                style: TextStyle(color: Colors.black),
+                              ),
+                            ),
+                            Expanded(
+                              child: ListView.builder(
+                                // shrinkWrap: true,
+                                // scrollDirection: Axis.horizontal,
+                                itemCount: dashboardList.dashboardList.length,
+                                itemBuilder: (BuildContext context, index) {
+                                  return Column(
+                                    crossAxisAlignment:
+                                        CrossAxisAlignment.start,
+                                    children: [
+                                      Padding(
+                                          padding: const EdgeInsets.only(
+                                            left: 8.0,
+                                            right: 8.0,
+                                          ),
+                                          child: Stack(
+                                            children: <Widget>[
+                                              Container(
+                                                height: 80,
+                                                width: MediaQuery.of(context)
+                                                        .size
+                                                        .width -
+                                                    16 -
+                                                    10,
+                                                color: Colors.grey[200],
+                                                child: Center(
+                                                  child: ListTile(
+                                                    leading: Container(
+                                                      width: 60,
+                                                      height: 60,
+                                                      color: Colors.white,
+                                                      child: Center(
+                                                        child: Column(
+                                                          mainAxisAlignment:
+                                                              MainAxisAlignment
+                                                                  .center,
+                                                          children: [
+                                                            Text(
+                                                              DateFormat.MMM().format(
+                                                                  DateTime.parse(dashboardList
+                                                                      .dashboardList[
+                                                                          index]
+                                                                      .timestamp)),
+                                                              style: TextStyle(
+                                                                  color: Colors
+                                                                      .black),
+                                                            ),
+                                                            Text(
+                                                              DateFormat.d().format(
+                                                                  DateTime.parse(dashboardList
+                                                                      .dashboardList[
+                                                                          index]
+                                                                      .timestamp)),
+                                                              style: TextStyle(
+                                                                  color: Colors
+                                                                      .black),
+                                                            ),
+                                                            Text(
+                                                              DateFormat.y().format(
+                                                                  DateTime.parse(dashboardList
+                                                                      .dashboardList[
+                                                                          index]
+                                                                      .timestamp)),
+                                                              style: TextStyle(
+                                                                  color: Colors
+                                                                      .black),
+                                                            ),
+                                                          ],
+                                                        ),
+                                                      ),
+                                                    ),
+                                                    subtitle: Text(
+                                                      dashboardList
+                                                          .dashboardList[index]
+                                                          .deliveryAgent,
+                                                      style: TextStyle(
+                                                          color: Colors.black),
+                                                    ),
+                                                    title: Text(
+                                                      dashboardList
+                                                                  .dashboardList[
+                                                                      index]
+                                                                  .deliveryStatus ==
+                                                              'Delivered'
+                                                          ? '  ${dashboardList.dashboardList[index].deliveryStatus} to : ${dashboardList.dashboardList[index].retailerName}'
+                                                          : '${dashboardList.dashboardList[index].deliveryStatus}',
+                                                      style: TextStyle(
+                                                          color: Colors.black),
+                                                    ),
+                                                    trailing: Text(
+                                                      "Total Crates: " +
+                                                          dashboardList
+                                                              .dashboardList[
+                                                                  index]
+                                                              .crateId
+                                                              .split(',')
+                                                              .length
+                                                              .toString(),
+                                                      style: TextStyle(
+                                                          color: Colors.black),
+                                                    ),
+                                                  ),
+                                                ),
+                                              ),
+                                              Align(
+                                                alignment: Alignment.bottomLeft,
+                                                child: Container(
+                                                  height: 80,
+                                                  width: 5,
+                                                  color: dashboardList
+                                                              .dashboardList[
+                                                                  index]
+                                                              .deliveryStatus ==
+                                                          "Delivered"
+                                                      ? Colors.green
+                                                      : Colors.red,
+                                                ),
+                                              ),
+                                            ],
+                                          )),
+                                      Divider(
+                                        thickness: 0.0,
+                                      ),
+                                    ],
+                                  );
+                                },
+                              ),
+                            ),
+                            Container(
+                              height: 80,
+                              child: Padding(
+                                padding: const EdgeInsets.all(8.0),
+                                child: RaisedButton(
+                                  child: Row(
+                                    mainAxisAlignment: MainAxisAlignment.center,
+                                    children: [
+                                      Text(
+                                        'SCAN CRATES',
+                                        style: TextStyle(
+                                            color: Colors.white, fontSize: 20),
+                                      ),
+                                    ],
+                                  ),
+                                  color: Color(0xFFFF3799),
+                                  // shape: RoundedRectangleBorder(
+                                  //     borderRadius: BorderRadius.all(Radius.circular(
+                                  //         10.0 * SizeConfig.widthMultiplier))),
+                                  onPressed: () {
+                                    // BlocProvider.of<QrcodeBloc>(context)
+                                    //     .add(QRScanButtonPressed());
+                                    Navigator.of(context).push(
+                                        MaterialPageRoute(
+                                            builder: (context) =>
+                                                QrCodeScreen()));
+                                  },
+                                ),
+                              ),
+                            )
+                          ],
+                        ),
+                      ),
+                    );
+            }
+            if (state is DashboardFailure) {
+              return RefreshIndicator(
+                onRefresh: () async {
+                  BlocProvider.of<DashboardBloc>(context)
+                      .add(RefreshButtonPressed());
+                },
+                child: SingleChildScrollView(
+                  physics: AlwaysScrollableScrollPhysics(
+                      parent: BouncingScrollPhysics()),
+                  child: Container(
+                    height: MediaQuery.of(context).size.height,
+                    decoration: BoxDecoration(
+                      gradient: LinearGradient(
+                        begin: Alignment.centerLeft,
+                        end: Alignment.centerRight,
+                        //stops: [0.3, 0.6, .9],
+                        colors: [
+                          Color(0xff993164),
+                          Color(0xff6E3869),
+                          Color(0xff323F6C),
+                        ],
+                      ),
+                    ),
+                    child: Padding(
+                      padding: const EdgeInsets.all(15.0),
+                      child: Text(
+                        'Something went wrong! pull down to refresh',
+                        style: TextStyle(fontSize: 20),
+                      ),
+                    ),
+                  ),
                 ),
               );
             }
-            return Container();
+            //return Container();
           },
         ),
       ),

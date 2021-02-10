@@ -18,3 +18,7 @@ class QRIsInvalid extends QrcodeState {
 class QRIsDuplicate extends QrcodeState {
   QRIsDuplicate();
 }
+
+class SomethingWentWrong extends QrcodeState {
+  SomethingWentWrong();
+}

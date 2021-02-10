@@ -1,5 +1,8 @@
 import 'dart:async';
+import 'package:bitcope/core/error_handling/api_result.dart';
+import 'package:bitcope/core/error_handling/network_exceptions.dart';
 import 'package:bitcope/features/authentication/authentication_bloc.dart';
+import 'package:bitcope/features/login_register/data/model/user_model.dart';
 import 'package:bitcope/features/login_register/data/repository/user_repository.dart';
 import 'package:bloc/bloc.dart';
 import 'package:flutter/cupertino.dart';
@@ -28,6 +31,7 @@ class LoginBloc extends Bloc<LoginEvent, LoginState> {
   ) async* {
     if (event is LoginButtonPressed) {
       yield LoginInitial();
+      //  yield BlockLoginButton();
       yield ShowProgressBar();
 
       try {
@@ -40,13 +44,19 @@ class LoginBloc extends Bloc<LoginEvent, LoginState> {
         if (hasFile) {
           String serverUrl = await ss.getFileUrl();
           print('serverURL is : ' + serverUrl.trim() + '/login/');
-          final user = await userRepository.authenticate(
+          ApiResult<User> user = await userRepository.authenticate(
             username: event.username,
             password: event.password,
             url: serverUrl.trim() + '/login/',
           );
-          authenticationBloc.add(LoggedIn(user: user));
-          yield LoginInitial();
+
+          yield* user.when(success: (user) async* {
+            authenticationBloc.add(LoggedIn(user: user));
+            yield LoginInitial();
+          }, failure: (NetworkExceptions error) async* {
+            yield LoginFaliure(error: NetworkExceptions.getErrorMessage(error));
+            //  yield RemoveBlockForLoginButton();
+          });
         } else {
           String serverUrl = await ss.downloadServerDetailsFile();
           print('serverURL is : ' + serverUrl.trim() + '/login/');
@@ -55,12 +65,21 @@ class LoginBloc extends Bloc<LoginEvent, LoginState> {
             password: event.password,
             url: serverUrl.trim() + '/login/',
           );
-          authenticationBloc.add(LoggedIn(user: user));
-          yield LoginInitial();
+          yield* user.when(
+            success: (user) async* {
+              authenticationBloc.add(LoggedIn(user: user));
+              yield LoginInitial();
+            },
+            failure: (NetworkExceptions error) async* {
+              yield LoginFaliure(
+                  error: NetworkExceptions.getErrorMessage(error));
+              //   yield RemoveBlockForLoginButton();
+            },
+          );
         }
       } catch (error) {
         print(error);
-        yield LoginFaliure(error: error.toString());
+        //yield LoginFaliure(error: error.toString());
       }
     }
   }

@@ -65,48 +65,48 @@ class QrCodeScreen extends StatelessWidget {
           },
           child: BlocBuilder<QrcodeBloc, QrcodeState>(
             builder: (context, state) {
-              if (state is QrcodeInitial) {
-                return Container(
-                  color: Colors.grey[200],
-                  child: Column(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: [
-                      Center(
-                        child: Text(
-                          "Please Press Scan Button to Scan the Crate",
-                          style: TextStyle(color: Colors.black),
-                        ),
-                      ),
-                      Container(
-                        height: 80,
-                        child: Padding(
-                          padding: const EdgeInsets.all(8.0),
-                          child: RaisedButton(
-                            child: Row(
-                              mainAxisAlignment: MainAxisAlignment.center,
-                              children: [
-                                Text(
-                                  'SCAN CRATES',
-                                  style: TextStyle(
-                                      color: Colors.white, fontSize: 20),
-                                ),
-                              ],
-                            ),
-                            color: Color(0xFFFF3799),
-                            // shape: RoundedRectangleBorder(
-                            //     borderRadius: BorderRadius.all(Radius.circular(
-                            //         10.0 * SizeConfig.widthMultiplier))),
-                            onPressed: () {
-                              BlocProvider.of<QrcodeBloc>(context)
-                                  .add(QRScanButtonPressed());
-                            },
-                          ),
-                        ),
-                      )
-                    ],
-                  ),
-                );
-              }
+              // if (state is QrcodeInitial) {
+              //   return Container(
+              //     color: Colors.grey[200],
+              //     child: Column(
+              //       mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              //       children: [
+              //         Center(
+              //           child: Text(
+              //             "Please Press Scan Button to Scan the Crate",
+              //             style: TextStyle(color: Colors.black),
+              //           ),
+              //         ),
+              //         Container(
+              //           height: 80,
+              //           child: Padding(
+              //             padding: const EdgeInsets.all(8.0),
+              //             child: RaisedButton(
+              //               child: Row(
+              //                 mainAxisAlignment: MainAxisAlignment.center,
+              //                 children: [
+              //                   Text(
+              //                     'SCAN CRATES',
+              //                     style: TextStyle(
+              //                         color: Colors.white, fontSize: 20),
+              //                   ),
+              //                 ],
+              //               ),
+              //               color: Color(0xFFFF3799),
+              //               // shape: RoundedRectangleBorder(
+              //               //     borderRadius: BorderRadius.all(Radius.circular(
+              //               //         10.0 * SizeConfig.widthMultiplier))),
+              //               onPressed: () {
+              //                 BlocProvider.of<QrcodeBloc>(context)
+              //                     .add(QRScanButtonPressed());
+              //               },
+              //             ),
+              //           ),
+              //         )
+              //       ],
+              //     ),
+              //   );
+              // }
               if (state is QrcodeAdded) {
                 qrCodeList = state.qrListForPL;
                 print(state.qrListForPL.length.toString());
@@ -117,10 +117,15 @@ class QrCodeScreen extends StatelessWidget {
                     children: [
                       ListTile(
                         onTap: null,
-                        title: Text(
-                          'Scanned Crates',
-                          style: TextStyle(color: Colors.black),
-                        ),
+                        title: qrCodeList.length == 0
+                            ? Text(
+                                'Nothing in Scanned Crates! Please Press Scan button to start scan!',
+                                style: TextStyle(color: Colors.black),
+                              )
+                            : Text(
+                                'Scanned Crates',
+                                style: TextStyle(color: Colors.black),
+                              ),
                       ),
                       Expanded(
                         child: ListView.builder(
@@ -248,10 +253,23 @@ class QrCodeScreen extends StatelessWidget {
                                 //     borderRadius: BorderRadius.all(Radius.circular(
                                 //         10.0 * SizeConfig.widthMultiplier))),
                                 onPressed: () {
-                                  Navigator.of(context).push(MaterialPageRoute(
-                                      builder: (context) => QrValidationScreen(
-                                            qrRepository: qrRepository,
-                                          )));
+                                  if (qrRepository.qrCodeList.length > 0) {
+                                    Navigator.of(context).push(
+                                        MaterialPageRoute(
+                                            builder: (context) =>
+                                                QrValidationScreen(
+                                                  qrRepository: qrRepository,
+                                                )));
+                                  } else {
+                                    _scaffoldKey.currentState.showSnackBar(
+                                      SnackBar(
+                                        duration: Duration(milliseconds: 1200),
+                                        content: Text(
+                                            'Please Add Atleast one QrCode to Proceed further'),
+                                        backgroundColor: Colors.red,
+                                      ),
+                                    );
+                                  }
                                 },
                               ),
                             ),
