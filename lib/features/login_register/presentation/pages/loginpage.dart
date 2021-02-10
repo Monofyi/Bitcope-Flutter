@@ -48,7 +48,9 @@ class _LoginPageState extends State<LoginPage> {
             _scaffoldKey.currentState.showSnackBar(
               SnackBar(
                 duration: Duration(milliseconds: 1200),
-                content: Text('${state.error}'),
+                content: Container(
+                    height: 4.5 * SizeConfig.heightMultiplier,
+                    child: Center(child: Text('${state.error}'))),
                 backgroundColor: Colors.red,
               ),
             );
@@ -234,40 +236,48 @@ class _LoginPageState extends State<LoginPage> {
                       child: Row(
                         mainAxisAlignment: MainAxisAlignment.center,
                         children: [
-                          Text(
-                            'SIGN IN',
-                            style: TextStyle(color: Colors.white),
-                          ),
-                          SizedBox(
-                            width: 1.0 * SizeConfig.widthMultiplier,
-                          ),
                           state is ShowProgressBar
                               ? SizedBox(
                                   width: 5.0 * SizeConfig.widthMultiplier,
                                   height: 5.0 * SizeConfig.widthMultiplier,
                                   child: CircularProgressIndicator(),
                                 )
-                              : Container(),
+                              : Text(
+                                  'SIGN IN',
+                                  style: TextStyle(color: Colors.white),
+                                ),
+                          SizedBox(
+                            width: 1.0 * SizeConfig.widthMultiplier,
+                          ),
+                          // state is ShowProgressBar
+                          //     ? SizedBox(
+                          //         width: 5.0 * SizeConfig.widthMultiplier,
+                          //         height: 5.0 * SizeConfig.widthMultiplier,
+                          //         child: CircularProgressIndicator(),
+                          //       )
+                          //     : Container(),
                         ],
                       ),
                       color: Color(0xFFFF3799),
                       shape: RoundedRectangleBorder(
                           borderRadius: BorderRadius.all(Radius.circular(
                               10.0 * SizeConfig.widthMultiplier))),
-                      onPressed: () {
-                        if (_formKey.currentState.validate()) {
-                          //print('im okey');
-                          // _formKey.currentState.save();
+                      onPressed: state is ShowProgressBar
+                          ? () {}
+                          : () {
+                              if (_formKey.currentState.validate()) {
+                                //print('im okey');
+                                // _formKey.currentState.save();
 
-                          BlocProvider.of<LoginBloc>(context)
-                              .add(LoginButtonPressed(
-                            username: _usernameController.text,
-                            password: _passwordController.text,
-                          ));
-                          BlocProvider.of<LoginBloc>(context)
-                              .add(ShowProgressBarEvent(showProgress: true));
-                        }
-                      },
+                                BlocProvider.of<LoginBloc>(context)
+                                    .add(LoginButtonPressed(
+                                  username: _usernameController.text,
+                                  password: _passwordController.text,
+                                ));
+                                BlocProvider.of<LoginBloc>(context).add(
+                                    ShowProgressBarEvent(showProgress: true));
+                              }
+                            },
                     ),
                   ),
                   SizedBox(height: 3.0 * SizeConfig.heightMultiplier),

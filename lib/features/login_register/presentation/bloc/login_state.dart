@@ -13,6 +13,10 @@ class LoginInitial extends LoginState {}
 
 class LoginLoading extends LoginState {}
 
+// class BlockLoginButton extends LoginState {}
+
+// class RemoveBlockForLoginButton extends LoginState {}
+
 class LoginFaliure extends LoginState {
   final String error;
 

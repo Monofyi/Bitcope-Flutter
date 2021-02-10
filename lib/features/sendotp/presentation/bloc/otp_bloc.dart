@@ -1,5 +1,9 @@
 import 'dart:async';
 
+import 'package:bitcope/core/error_handling/api_result.dart';
+import 'package:bitcope/core/error_handling/network_exceptions.dart';
+import 'package:bitcope/features/sendotp/data/model/order_status_response.dart';
+import 'package:bitcope/features/sendotp/data/model/otp_response_model.dart';
 import 'package:bitcope/features/sendotp/data/repository/otp_repository.dart';
 import 'package:bloc/bloc.dart';
 import 'package:equatable/equatable.dart';
@@ -29,19 +33,25 @@ class OTPBloc extends Bloc<OTPEvent, OTPState> {
             .toString()
             .trim();
 
-        final otpResponse = await otpRepository.otpValidationResponse(
-            retailerName: event.retailerName,
-            phoneno: event.phoneno,
-            token: token,
-            transactionid: event.transactionId,
-            url: url);
+        ApiResult<OTPResponseModel> otpResponse =
+            await otpRepository.otpValidationResponse(
+                retailerName: event.retailerName,
+                phoneno: event.phoneno,
+                token: token,
+                transactionid: event.transactionId,
+                url: url);
         //session_id = otpResponse.details;
-        if ((otpResponse.status).contains('Success')) {
-          yield OTPHasSent();
-        }
-        if (otpResponse.status != 'Success') {
-          yield OTPHaveNotSent();
-        }
+
+        yield* otpResponse.when(success: (otpResponse) async* {
+          if ((otpResponse.status).contains('Success')) {
+            yield OTPHasSent();
+          }
+          if (otpResponse.status != 'Success') {
+            yield OTPHaveNotSent();
+          }
+        }, failure: (NetworkExceptions error) async* {
+          //yield LoginFaliure(error: NetworkExceptions.getErrorMessage(error));
+        });
       } catch (e) {}
     }
     if (event is VerifyOTPButtonPressed) {
@@ -62,21 +72,33 @@ class OTPBloc extends Bloc<OTPEvent, OTPState> {
                 "/order_status_update/")
             .toString()
             .trim();
-        final otpVerifyResponse = await otpRepository.otpVerifyResponse(
-            otp: event.otp, token: token, url: urlValidateOtp);
-
-        if ((otpVerifyResponse.status).contains('Success')) {
-          final orderSuccess = await otpRepository.orderSuccessResponse(
-              orderId: event.transactionId,
-              token: token,
-              url: updateOrderStatus);
-          if (orderSuccess.status.contains('True')) {
-            yield OTPHasVerfied();
+        ApiResult<OTPResponseModel> otpVerifyResponse =
+            await otpRepository.otpVerifyResponse(
+                otp: event.otp, token: token, url: urlValidateOtp);
+        yield* otpVerifyResponse.when(success: (otpVerifyResponse) async* {
+          if ((otpVerifyResponse.status).contains('Success')) {
+            ApiResult<OrderResponseModel> orderSuccess =
+                await otpRepository.orderSuccessResponse(
+                    orderId: event.transactionId,
+                    token: token,
+                    url: updateOrderStatus);
+            yield* orderSuccess.when(
+              success: (orderSuccess) async* {
+                if (orderSuccess.status.contains('True')) {
+                  yield OTPHasVerfied();
+                }
+              },
+              failure: (NetworkExceptions error) async* {
+                //yield LoginFaliure(error: NetworkExceptions.getErrorMessage(error));
+              },
+            );
           }
-        }
-        if (otpVerifyResponse.status != 'Success') {
-          yield OTPHasVerficationFailed();
-        }
+          if (otpVerifyResponse.status != 'Success') {
+            yield OTPHasVerficationFailed();
+          }
+        }, failure: (NetworkExceptions error) async* {
+          //yield LoginFaliure(error: NetworkExceptions.getErrorMessage(error));
+        });
       } catch (e) {}
     }
   }

@@ -1,5 +1,7 @@
 import 'dart:async';
 
+import 'package:bitcope/core/error_handling/api_result.dart';
+import 'package:bitcope/core/error_handling/network_exceptions.dart';
 import 'package:bitcope/features/qrcode_scan/data/repository/qrcode_repository.dart';
 import 'package:bloc/bloc.dart';
 import 'package:meta/meta.dart';
@@ -18,15 +20,20 @@ class QrcodeBloc extends Bloc<QrcodeEvent, QrcodeState> {
   ) async* {
     if (event is QRScanButtonPressed) {
       try {
-        String status = await qrRepository.getQrCode();
+        ApiResult<String> status = await qrRepository.getQrCode();
+        yield* status.when(success: (status) async* {
+          if (status == 'valid') {
+            yield QrcodeAdded(qrListForPL: qrRepository.qrStringList);
+          } else if (status == 'duplicate') {
+            yield QRIsDuplicate();
+          } else if (status == 'invalid') {
+            yield QRIsInvalid();
+          }
+        }, failure: (NetworkExceptions error) async* {
+          yield SomethingWentWrong();
+        });
         print(status);
-        if (status == 'valid') {
-          yield QrcodeAdded(qrListForPL: qrRepository.qrStringList);
-        } else if (status == 'duplicate') {
-          yield QRIsDuplicate();
-        } else if (status == 'invalid') {
-          yield QRIsInvalid();
-        }
+
         //List<String> qrCodeList = List.of(qrRepository.qrStringList);
         yield QrcodeAdded(qrListForPL: qrRepository.qrStringList);
       } catch (e) {}

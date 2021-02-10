@@ -1,18 +1,26 @@
+import 'package:bitcope/core/error_handling/api_result.dart';
+import 'package:bitcope/core/error_handling/network_exceptions.dart';
 import 'package:bitcope/features/qrcode_scan/data/datasources/bitecope_qr_scanner.dart';
 
 class QrRepository {
   List<String> qrCodeList = [];
-  Future<String> getQrCode() async {
-    String value = await getBiteQRCode();
-    if (value != null && value != '-1') {
-      if (!qrCodeList.contains(value)) {
-        qrCodeList.add(value);
-        return "valid";
+  Future<ApiResult<String>> getQrCode() async {
+    ApiResult<String> value = await getBiteQRCode();
+
+    return value.when(success: (value) {
+      if (value != null && value != '-1') {
+        if (!qrCodeList.contains(value)) {
+          qrCodeList.add(value);
+          return ApiResult.success(data: "valid");
+        } else {
+          return ApiResult.success(data: "duplicate");
+        }
       } else {
-        return "duplicate";
+        return ApiResult.success(data: "Invalid Qrcode");
       }
-    }
-    return "invalid";
+    }, failure: (NetworkExceptions error) {
+      return ApiResult.failure(error: error);
+    });
   }
 
   String get listToString {
